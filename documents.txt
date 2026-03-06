@@ -1,0 +1,7 @@
+The Nile is the longest river in Africa. It flows through northeastern Africa and empties into the Mediterranean Sea.
+
+Mount Everest is the highest mountain above sea level. It is located in the Himalayas on the border of Nepal and China.
+
+Python is a high-level programming language known for its readability and versatility. It is commonly used in machine learning, web development, and automation.
+
+FAISS is a library for efficient similarity search over dense vectors. It is often used in retrieval-augmented generation systems.
