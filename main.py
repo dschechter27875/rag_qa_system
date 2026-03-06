@@ -1,21 +1,30 @@
+"""
+Mini Retrieval-Augmented QA System
+
+Pipeline:
+- Load document corpus
+- Split documents into chunks
+- Embed chunks using SentenceTransformers
+- Store embeddings in a FAISS index
+- Retrieve top-k relevant chunks for a query
+- Generate an answer using FLAN-T5
+
+This project demonstrates a minimal end-to-end RAG pipeline.
+"""
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import faiss
 import numpy as np
 import torch
 
-# -------------------------
-# 1 Load documents
-# -------------------------
+# Load documents corpus
 
 with open("data/documents.txt", "r") as f:
     raw_docs = [line.strip() for line in f if line.strip()]
 
 print("Loaded documents:", len(raw_docs))
 
-# -------------------------
-# 2 Chunk documents
-# -------------------------
+# Chunk documents into smaller pieces for retrieval
 
 def chunk_text(text, chunk_size=12):
     words = text.split()
@@ -30,9 +39,7 @@ for doc in raw_docs:
 
 print("Created chunks:", len(chunks))
 
-# -------------------------
-# 3 Embedding model
-# -------------------------
+# Sentence Embedding model
 
 embed_model = SentenceTransformer("all-MiniLM-L6-v2")
 
@@ -40,9 +47,7 @@ chunk_embeddings = embed_model.encode(chunks)
 chunk_embeddings = np.array(chunk_embeddings).astype("float32")
 faiss.normalize_L2(chunk_embeddings)
 
-# -------------------------
-# 4 Build FAISS index
-# -------------------------
+#  Build FAISS vector index
 
 dim = chunk_embeddings.shape[1]
 index = faiss.IndexFlatIP(dim)
@@ -50,9 +55,7 @@ index.add(chunk_embeddings)
 
 print("FAISS index size:", index.ntotal)
 
-# -------------------------
-# 5 Load FLAN-T5
-# -------------------------
+# 5 Load generation model - FLAN-T5
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print("Generation device:", device)
@@ -60,9 +63,7 @@ print("Generation device:", device)
 gen_tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-small")
 gen_model = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-small").to(device)
 
-# -------------------------
-# 6 Example questions
-# -------------------------
+# 6 Example queries
 
 queries = [
     "What is FAISS used for?",
@@ -71,9 +72,7 @@ queries = [
     "Which river flows into the Mediterranean?"
 ]
 
-# -------------------------
 # 7 Retrieval + generation
-# -------------------------
 
 for query in queries:
     print("\n" + "="*70)
