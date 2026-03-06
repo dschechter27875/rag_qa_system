@@ -20,7 +20,7 @@ import torch
 
 
 # Load document corpus
-with open("data/documents.txt", "r") as f:
+with open("documents.txt", "r") as f:
     raw_docs = [line.strip() for line in f if line.strip()]
 
 print("Loaded documents:", len(raw_docs))
